@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-black: #080808;
+    --red-crimson: #E50920;
+    --red-hover: #FF1A2E;
+    --font-monolith: 'Bebas Neue', 'Syne', sans-serif;
+    --font-editorial: 'Syne', sans-serif;
+    --font-sub: 'Space Grotesk', 'Tenor Sans', sans-serif;
+    --font-body: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+    background-color: #080808;
+    color: #e5e5e7;
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom Red & Dark Scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #080808;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #E50920;
+  }
+
+  ::selection {
+    background: #E50920;
+    color: #ffffff;
+  }
+}
+
+.font-monolith {
+  font-family: 'Bebas Neue', 'Syne', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.font-editorial-modern {
+  font-family: 'Syne', sans-serif;
+}
+
+.font-grotesk {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-editorial-title {
+  font-family: 'Syne', 'Cinzel', sans-serif;
+}
+
+.font-editorial-italic {
+  font-family: 'Italiana', serif;
+}
+
+.font-editorial-sub {
+  font-family: 'Space Grotesk', 'Tenor Sans', sans-serif;
+}
+
+/* Subtle Cinematic Film Grain */
+.grain-overlay {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 0);
+  background-size: 20px 20px;
+}
+
+/* Precision Hairline Separator */
+.hairline-b {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hairline-t {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hairline-r {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hairline-all {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Red Glow Utilities */
+.shadow-red-glow {
+  box-shadow: 0 0 35px -5px rgba(229, 9, 32, 0.25);
+}
+
+.text-crimson {
+  color: #E50920;
+}
+
+.bg-crimson {
+  background-color: #E50920;
+}
+
+.border-crimson {
+  border-color: #E50920;
+}

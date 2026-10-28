@@ -1,0 +1,259 @@
+{
+  "entities": {
+    "SiteContent": {
+      "title": "SiteContent",
+      "description": "Global website editable copy, hero configuration, about text, and brand settings.",
+      "type": "object",
+      "properties": {
+        "brandName": {
+          "type": "string",
+          "maxLength": 60,
+          "description": "Brand name, e.g. UNSEEN SIDE"
+        },
+        "modelName": {
+          "type": "string",
+          "maxLength": 60,
+          "description": "Virtual model identity, e.g. KRISH-KARTIK"
+        },
+        "heroTitle": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Hero section primary title"
+        },
+        "heroSubtitle": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Hero section secondary subtitle"
+        },
+        "heroPretitle": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Hero pretitle badge"
+        },
+        "heroStatement": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Hero closing editorial statement"
+        },
+        "aboutHeading": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "About section header"
+        },
+        "aboutParagraph1": {
+          "type": "string",
+          "maxLength": 600,
+          "description": "First paragraph of model philosophy"
+        },
+        "aboutParagraph2": {
+          "type": "string",
+          "maxLength": 600,
+          "description": "Second paragraph of model philosophy"
+        },
+        "contactEmail": {
+          "type": "string",
+          "maxLength": 120,
+          "description": "Official contact email address"
+        },
+        "contactPhone": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Official contact phone number"
+        },
+        "contactLocation": {
+          "type": "string",
+          "maxLength": 150,
+          "description": "Studio or representation location"
+        },
+        "heroBackdropText": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Massive brutalist typography behind hero image"
+        },
+        "heroImageUrl": {
+          "type": "string",
+          "maxLength": 500000,
+          "description": "Selected model photograph path or data URL for hero foreground"
+        },
+        "availabilityStatus": {
+          "type": "string",
+          "maxLength": 120,
+          "description": "Availability or creative status banner text"
+        },
+        "instagramUrl": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Official Instagram link"
+        },
+        "facebookUrl": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Official Facebook link"
+        },
+        "twitterUrl": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Official X/Twitter link"
+        },
+        "footerText": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Footer copyright statement"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Server timestamp of last update"
+        },
+        "updatedBy": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "UID of updating admin"
+        }
+      },
+      "required": ["brandName", "modelName", "heroTitle", "contactEmail"]
+    },
+    "GalleryItem": {
+      "title": "GalleryItem",
+      "description": "Curated model portfolio photographs and editorial images.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 120,
+          "description": "Title of the look or editorial shoot"
+        },
+        "subtitle": {
+          "type": "string",
+          "maxLength": 240,
+          "description": "Brief description or mood caption"
+        },
+        "imageUrl": {
+          "type": "string",
+          "maxLength": 500000,
+          "description": "Public URL, relative path, or data URL for the model photograph"
+        },
+        "altText": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Descriptive accessibility text for virtual model image"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["editorial", "studio", "runway", "concept", "archive"],
+          "description": "Editorial category"
+        },
+        "series": {
+          "type": "string",
+          "maxLength": 80,
+          "description": "Series name such as Studio Series No. 01, The Bold, Look 01"
+        },
+        "order": {
+          "type": "number",
+          "description": "Sort order index"
+        },
+        "isPublished": {
+          "type": "boolean",
+          "description": "Visibility flag on public site"
+        },
+        "featured": {
+          "type": "boolean",
+          "description": "Whether image appears in primary highlights"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Last update timestamp"
+        }
+      },
+      "required": ["title", "imageUrl", "category", "isPublished", "order"]
+    },
+    "ContactInquiry": {
+      "title": "ContactInquiry",
+      "description": "Client collaboration inquiries and contact submissions.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 2,
+          "description": "Name of the inquirer"
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 120,
+          "pattern": "^[^@]+@[^@]+\\.[^@]+$",
+          "description": "Email address"
+        },
+        "subject": {
+          "type": "string",
+          "maxLength": 150,
+          "description": "Subject or inquiry type"
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 2000,
+          "minLength": 10,
+          "description": "Message body"
+        },
+        "inquiryType": {
+          "type": "string",
+          "enum": ["collaboration", "campaign", "editorial", "press", "general"],
+          "description": "Type of booking or inquiry"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["new", "reviewed", "archived"],
+          "description": "Administrative review status"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["name", "email", "message", "inquiryType"]
+    },
+    "AdminProfile": {
+      "title": "AdminProfile",
+      "description": "Authorized administrator record for dashboard access.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "maxLength": 120,
+          "description": "Admin email address"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "owner"],
+          "description": "Authorization level"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Enrollment timestamp"
+        }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/content/{contentId}": {
+      "schema": { "$ref": "SiteContent" },
+      "description": "Contains published website text, settings, and sections. Public read, admin write."
+    },
+    "/gallery/{galleryId}": {
+      "schema": { "$ref": "GalleryItem" },
+      "description": "Contains virtual model images and portfolio looks. Public read published, admin write."
+    },
+    "/inquiries/{inquiryId}": {
+      "schema": { "$ref": "ContactInquiry" },
+      "description": "Contains contact submissions from public users. Public create, admin read/manage."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "AdminProfile" },
+      "description": "Authoritative list of administrator UIDs. Protected read and write."
+    }
+  }
+}

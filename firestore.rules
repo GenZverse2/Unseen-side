@@ -1,0 +1,144 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global security primitives
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isBootstrappedAdmin() {
+      return isSignedIn() &&
+        request.auth.token.email == 'gdayoota@gmail.com' &&
+        request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() || (
+        isSignedIn() &&
+        request.auth.token.email_verified == true &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Validation Blueprint for Site Content
+    function isValidSiteContent(data) {
+      return data.keys().hasAll(['brandName', 'modelName', 'heroTitle', 'contactEmail']) &&
+        data.keys().hasOnly([
+          'brandName', 'modelName', 'heroTitle', 'heroSubtitle',
+          'heroPretitle', 'heroStatement', 'heroBackdropText', 'heroImageUrl',
+          'availabilityStatus', 'aboutHeading', 'aboutParagraph1', 'aboutParagraph2',
+          'contactEmail', 'contactPhone', 'contactLocation',
+          'instagramUrl', 'facebookUrl', 'twitterUrl', 'footerText',
+          'updatedAt', 'updatedBy', 'createdAt'
+        ]) &&
+        data.brandName is string && data.brandName.size() <= 60 &&
+        data.modelName is string && data.modelName.size() <= 60 &&
+        data.heroTitle is string && data.heroTitle.size() <= 200 &&
+        data.contactEmail is string && data.contactEmail.size() <= 120 &&
+        (!('heroSubtitle' in data) || (data.heroSubtitle is string && data.heroSubtitle.size() <= 300)) &&
+        (!('heroPretitle' in data) || (data.heroPretitle is string && data.heroPretitle.size() <= 100)) &&
+        (!('heroStatement' in data) || (data.heroStatement is string && data.heroStatement.size() <= 300)) &&
+        (!('heroBackdropText' in data) || (data.heroBackdropText is string && data.heroBackdropText.size() <= 40)) &&
+        (!('heroImageUrl' in data) || (data.heroImageUrl is string && data.heroImageUrl.size() <= 500000)) &&
+        (!('availabilityStatus' in data) || (data.availabilityStatus is string && data.availabilityStatus.size() <= 120)) &&
+        (!('aboutHeading' in data) || (data.aboutHeading is string && data.aboutHeading.size() <= 200)) &&
+        (!('aboutParagraph1' in data) || (data.aboutParagraph1 is string && data.aboutParagraph1.size() <= 600)) &&
+        (!('aboutParagraph2' in data) || (data.aboutParagraph2 is string && data.aboutParagraph2.size() <= 600)) &&
+        (!('contactPhone' in data) || (data.contactPhone is string && data.contactPhone.size() <= 40)) &&
+        (!('contactLocation' in data) || (data.contactLocation is string && data.contactLocation.size() <= 150)) &&
+        (!('instagramUrl' in data) || (data.instagramUrl is string && data.instagramUrl.size() <= 200)) &&
+        (!('facebookUrl' in data) || (data.facebookUrl is string && data.facebookUrl.size() <= 200)) &&
+        (!('twitterUrl' in data) || (data.twitterUrl is string && data.twitterUrl.size() <= 200)) &&
+        (!('footerText' in data) || (data.footerText is string && data.footerText.size() <= 200));
+    }
+
+    // Validation Blueprint for Gallery Items
+    function isValidGalleryItem(data) {
+      return data.keys().hasAll(['title', 'imageUrl', 'category', 'isPublished', 'order']) &&
+        data.keys().hasOnly([
+          'title', 'subtitle', 'imageUrl', 'altText', 'category',
+          'series', 'order', 'isPublished', 'featured', 'createdAt', 'updatedAt'
+        ]) &&
+        data.title is string && data.title.size() <= 120 &&
+        data.imageUrl is string && data.imageUrl.size() <= 500000 &&
+        data.category in ['editorial', 'studio', 'runway', 'concept', 'archive'] &&
+        data.isPublished is bool &&
+        data.order is number &&
+        (!('subtitle' in data) || (data.subtitle is string && data.subtitle.size() <= 240)) &&
+        (!('altText' in data) || (data.altText is string && data.altText.size() <= 200)) &&
+        (!('series' in data) || (data.series is string && data.series.size() <= 80)) &&
+        (!('featured' in data) || data.featured is bool);
+    }
+
+    // Validation Blueprint for Contact Submissions
+    function isValidContactInquiry(data) {
+      return data.keys().hasAll(['name', 'email', 'message', 'inquiryType']) &&
+        data.keys().hasOnly(['name', 'email', 'subject', 'message', 'inquiryType', 'status', 'createdAt']) &&
+        data.name is string && data.name.size() >= 2 && data.name.size() <= 100 &&
+        data.email is string && data.email.size() <= 120 && data.email.matches('^[^@]+@[^@]+\\.[^@]+$') &&
+        data.message is string && data.message.size() >= 10 && data.message.size() <= 2000 &&
+        data.inquiryType in ['collaboration', 'campaign', 'editorial', 'press', 'general'] &&
+        (!('subject' in data) || (data.subject is string && data.subject.size() <= 150)) &&
+        (!('status' in data) || data.status in ['new', 'reviewed', 'archived']);
+    }
+
+    // MATCH: Global Website Content
+    match /content/{contentId} {
+      allow get: if isValidId(contentId);
+      allow list: if true;
+      allow create: if isValidId(contentId) && isAdmin() &&
+                    isValidSiteContent(incoming()) && incoming().createdAt == request.time;
+      allow update: if isValidId(contentId) && isAdmin() &&
+                    isValidSiteContent(incoming()) && incoming().updatedAt == request.time;
+      allow delete: if isValidId(contentId) && isAdmin();
+    }
+
+    // MATCH: Virtual Model Portfolio Gallery
+    match /gallery/{galleryId} {
+      allow get: if isValidId(galleryId) && (existing().isPublished == true || isAdmin());
+      allow list: if resource.data.isPublished == true || isAdmin();
+      allow create: if isValidId(galleryId) && isAdmin() &&
+                    isValidGalleryItem(incoming()) && incoming().createdAt == request.time;
+      allow update: if isValidId(galleryId) && isAdmin() &&
+                    isValidGalleryItem(incoming()) && incoming().updatedAt == request.time;
+      allow delete: if isValidId(galleryId) && isAdmin();
+    }
+
+    // MATCH: Contact Inquiries (Strict PII Isolation)
+    match /inquiries/{inquiryId} {
+      allow get, list: if isAdmin();
+      allow create: if isValidId(inquiryId) &&
+                    isValidContactInquiry(incoming()) &&
+                    incoming().createdAt == request.time &&
+                    incoming().status == 'new';
+      allow update: if isValidId(inquiryId) && isAdmin() &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['status']) &&
+                    incoming().status in ['new', 'reviewed', 'archived'];
+      allow delete: if isValidId(inquiryId) && isAdmin();
+    }
+
+    // MATCH: Admin Management
+    match /admins/{adminId} {
+      allow read: if isAdmin();
+      allow write: if isBootstrappedAdmin() && isValidId(adminId);
+    }
+  }
+}

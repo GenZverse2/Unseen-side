@@ -1,0 +1,6 @@
+{
+  "name": "UNSEEN SIDE — Premium Virtual Model",
+  "description": "An exclusive virtual model portfolio and digital fashion editorial experience for UNSEEN SIDE and Krish-Kartik.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
